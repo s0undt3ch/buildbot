@@ -1532,3 +1532,4 @@ xxx
 yieldmetricsvalue
 zadka
 zope
+endcursor
