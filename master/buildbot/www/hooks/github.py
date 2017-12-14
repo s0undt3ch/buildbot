@@ -76,7 +76,6 @@ class GitHubEventHandler(PullRequestMixin):
         self.github_api_endpoint = github_api_endpoint
         self.debug = debug
         self.verify = verify
-        self.oauth_token = oauth_token
         self.integration_id = integration_id
         self.private_key = private_key
         self.installation_id = installation_id
@@ -337,10 +336,10 @@ class GitHubEventHandler(PullRequestMixin):
     def get_github_api_service(self):
         if self._github_api_service is None:
             log.info('Instantiating GH API Service')
-            if self.oauth_token or (self.integration_id and self.private_key and self.installation_id):
+            if self._token or (self.integration_id and self.private_key and self.installation_id):
                 self._github_api_service = yield githubapiservice.GithubApiService.getService(
                     self.master,
-                    oauth_token=self.oauth_token,
+                    oauth_token=self._token,
                     integration_id=self.integration_id,
                     private_key=self.private_key,
                     installation_id=self.installation_id,
