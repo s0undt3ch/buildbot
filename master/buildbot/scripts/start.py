@@ -51,7 +51,7 @@ class Follower:
     def _failure(self, why):
         if why.check(BuildmasterTimeoutError):
             print(rewrap("""\
-                The buildmaster took more than 10 seconds to start, so we were
+                The buildmaster took more than 30 seconds to start, so we were
                 unable to confirm that it started correctly.
                 Please 'tail twistd.log' and look for a line that says
                 'BuildMaster is running' to verify correct startup.
