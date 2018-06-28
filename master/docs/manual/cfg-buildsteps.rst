@@ -914,6 +914,34 @@ The revision in the GitHub event points to ``/head`` is important for the GitHub
 
 If you want to use  :bb:step:`Trigger` to create sub tests and want to have the GitHub reporter still update the original revision, make sure you set ``updateSourceStamp=False`` in the :bb:step:`Trigger` configuration.
 
+.. bb:step:: GitLab
+
+.. _Step-GitLab:
+
+GitLab
+++++++
+
+.. py:class:: buildbot.steps.source.gitlab.GitLab
+
+:bb:step:`GitLab` step is exactly like the :bb:step:`Git` step, except that it uses the source repo and branch sent by the :bb:chsrc:`GitLab` change hook when processing merge requests.
+
+When configuring builders, you can use a ChangeFilter with ``category = "push"``
+to select normal commits, and ``category = "merge_request"`` to select merge requests.
+
+See :file:`master/docs/examples/gitlab.cfg` in the Buildbot distribution
+for a tutorial example of integrating Buildbot with GitLab.
+
+.. note::
+
+    Your build worker will need access to the source project of the
+    changeset, or it won't be able to check out the source.  This means
+    authenticating the build worker via ssh credentials in the usual
+    way, then granting it access [via a GitLab deploy key
+    or GitLab project membership](https://docs.gitlab.com/ee/ssh/).
+    This needs to be done not only for the main git repo, but also for
+    each fork that wants to be able to submit merge requests against
+    the main repo.
+
 .. bb:step:: Darcs
 
 .. _Step-Darcs:
@@ -1453,6 +1481,7 @@ The defaults, which are suitable for GNU Make, are these::
 .. bb:step:: VC11
 .. bb:step:: VC12
 .. bb:step:: VC14
+.. bb:step:: VC141
 .. bb:step:: VS2003
 .. bb:step:: VS2005
 .. bb:step:: VS2008
@@ -1460,17 +1489,19 @@ The defaults, which are suitable for GNU Make, are these::
 .. bb:step:: VS2012
 .. bb:step:: VS2013
 .. bb:step:: VS2015
+.. bb:step:: VS2017
 .. bb:step:: VCExpress9
 .. bb:step:: MsBuild4
 .. bb:step:: MsBuild12
 .. bb:step:: MsBuild14
+.. bb:step:: MsBuild141
 
 Visual C++
 ++++++++++
 
 These steps are meant to handle compilation using Microsoft compilers.
-VC++ 6-14 (aka Visual Studio 2003-2015 and VCExpress9) are supported via calling ``devenv``.
-Msbuild as well as Windows Driver Kit 8 are supported via the ``MsBuild4``, ``MsBuild12``, and ``MsBuild14`` steps.
+VC++ 6-141 (aka Visual Studio 2003-2015 and VCExpress9) are supported via calling ``devenv``.
+Msbuild as well as Windows Driver Kit 8 are supported via the ``MsBuild4``, ``MsBuild12``, ``MsBuild14`` and  ``MsBuild141`` steps.
 These steps will take care of setting up a clean compilation environment, parsing the generated output in real time, and delivering as detailed as possible information about the compilation executed.
 
 All of the classes are in :mod:`buildbot.steps.vstudio`.
@@ -1484,6 +1515,7 @@ The available classes are:
 * ``VC11``
 * ``VC12``
 * ``VC14``
+* ``VC141``
 * ``VS2003``
 * ``VS2005``
 * ``VS2008``
@@ -1491,10 +1523,12 @@ The available classes are:
 * ``VS2012``
 * ``VS2013``
 * ``VS2015``
+* ``VS2017``
 * ``VCExpress9``
 * ``MsBuild4``
 * ``MsBuild12``
 * ``MsBuild14``
+* ``MsBuild141``
 
 The available constructor arguments are
 
@@ -2576,7 +2610,10 @@ Hyperlinks are added to the build detail web pages for each triggered build.
     You may use :ref:`Interpolate` here to dynamically construct new property values.
     For the simple case of copying a property, this might look like::
 
-        set_properties={"my_prop1" : Property("my_prop1")}
+        set_properties={"my_prop1" : Property("my_prop1"),
+                        "my_prop2" : Property("my_prop2")}
+
+    where ``Property`` is an instance of ``buildbot.process.properties.Property``
 
     .. note::
 

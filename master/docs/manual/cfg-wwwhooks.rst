@@ -131,6 +131,11 @@ The GitHub hook has the following parameters:
 ``token``
     If your GitHub or GitHub Enterprise instance does not allow anonymous communication, you need to provide an access token.  Instructions can be found here <https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/>
 
+``pullrequest_ref`` (default ``merge``)
+    Remote ref to test if a pull request is sent to the endpoint. See the GitHub developer manual
+    for possible values for pull requests. (e.g. ``head``)
+
+
 The simplest way to use GitHub hook is as follows:
 
 .. code-block:: python
@@ -342,12 +347,20 @@ These parameters will be passed along to the scheduler.
 
 .. note::
 
-    Your Git step must be configured with a git@ repourl, not a https: one, else the change from the webhook will not trigger a build.
+    To handle merge requests from forks properly, it's easiest to use a GitLab source step rather than a Git source step.
+
+.. note::
+
+    Your Git or GitLab step must be configured with a git@ repourl, not a https: one, else the change from the webhook will not trigger a build.
 
 .. warning::
 
     As in the previous case, the incoming HTTP requests for this hook are not authenticated by default.
     Anyone who can access the web status can "fake" a request from your GitLab server, potentially causing the buildmaster to run arbitrary code.
+
+.. warning::
+    When applicable, you need to permit access to internal/local networks.
+    See ``https://docs.gitlab.com/ee/security/webhooks.html`` for details.
 
 To protect URL against unauthorized access you should either
 
